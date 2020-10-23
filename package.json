@@ -1,0 +1,17 @@
+{
+  "name": "self-hosted-happs-node",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "peeech",
+  "license": "MIT",
+  "dependencies": {
+    "unzip": "^0.1.11",
+    "@holochain/conductor-api": "0.0.1-dev.8",
+    "fs": "0.0.1-security",
+    "tmp": "^0.2.1"
+  }
+}
