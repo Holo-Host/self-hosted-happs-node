@@ -1,3 +1,5 @@
+import yaml from "js-yaml";
+import fs from "fs";
 
 export const getListOfHapps = () => {
     const args = process.argv.slice(2);
@@ -11,9 +13,8 @@ export const getListOfHapps = () => {
             }
         ];
     } else {
-        // parse .yaml
-        // [TODO: unmock]
-        throw new Error(`Not implemented yet`);
+        let fileContents = fs.readFileSync(args[0], 'utf8');
+        return yaml.safeLoad(fileContents);
     }
     
 }
