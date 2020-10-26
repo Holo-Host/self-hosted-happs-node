@@ -32,6 +32,8 @@ const downloadFile = async (downloadUrl) => {
     })
 }
 
+// NOTE: this code assumes a single DNA per hApp.  This will need to be updated when the hApp bundle
+// spec is completed, and the hosted-happ config Yaml file will also need to be likewise updated
 export const installDna = async (happ, agentPubKey) => {
     const dnaPath = await downloadFile(happ.dna_url);
     // Install via admin interface
