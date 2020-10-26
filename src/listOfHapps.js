@@ -5,9 +5,9 @@ export const getListOfHapps = () => {
     if (args.length === 0) {
         return [
             {
-                "happId": "elemental-chat",
-                "uiUrl": "/tmp/elemental-chat-ui.zip",
-                "dnaUrl": "/Users/pj/hc/holochain/elemental-chat/elemental-chat.dna.gz",
+                "app_id": "elemental-chat",
+                "ui_url": "https://s3.eu-central-1.wasabisys.com/elemetal-chat-tests/elemental-chat.zip",
+                "dna_url": "https://s3.eu-central-1.wasabisys.com/elemetal-chat-tests/elemental-chat.dna.gz",
             }
         ];
     } else {

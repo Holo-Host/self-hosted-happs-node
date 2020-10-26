@@ -14,9 +14,10 @@
   "license": "MIT",
   "dependencies": {
     "@holochain/conductor-api": "0.0.1-dev.8",
+    "extract-zip": "^2.0.1",
     "fs": "0.0.1-security",
-    "tmp": "^0.2.1",
-    "unzipper": "^0.10.11"
+    "request": "^2.88.2",
+    "tmp": "^0.2.1"
   },
   "devDependencies": {
     "webpack": "^4.44.2",

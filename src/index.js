@@ -1,5 +1,6 @@
 import { getListOfHapps } from "./listOfHapps"
-import { createAgent, installHapp } from "./installHapp"
+import { installHapp } from "./installHapp"
+import { createAgent } from "./utils"
 
 const main = async () => {
     const listOfHapps = getListOfHapps();
