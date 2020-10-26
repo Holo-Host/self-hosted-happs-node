@@ -5,9 +5,9 @@ export const getListOfHapps = () => {
     if (args.length === 0) {
         return [
             {
-                happ-id = "elemental-chat";
-                ui-url = "/tmp/elemental-chat-ui.zip";
-                dna-urls = "/tmp/elemental-chat-dna.gz";
+                "happId": "elemental-chat",
+                "uiUrl": "/tmp/elemental-chat-ui.zip",
+                "dnaUrl": "/Users/pj/hc/holochain/elemental-chat/elemental-chat.dna.gz",
             }
         ];
     } else {

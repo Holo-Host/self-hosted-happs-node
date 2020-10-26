@@ -1,14 +1,19 @@
-import { getListOfHapps } from ./listOfHapps
-import { createAgent, installHapp } from ./installHapp
+import { getListOfHapps } from "./listOfHapps"
+import { createAgent, installHapp } from "./installHapp"
 
-try {
+const main = async () => {
     const listOfHapps = getListOfHapps();
-    const agentPubKey = createAgent();
+    const agentPubKey = await createAgent();
 
     const promises = listOfHapps.map(happ => installHapp(happ, agentPubKey));
     await Promise.all(promises);
 
     console.log("Self hosted happs installed successfully");
-} catch (e) {
-    console.error(e.message);
 }
+
+main()
+    .then(()=> process.exit())
+    .catch(e => {
+        console.error(e.message);
+        process.exit(1);
+    });
