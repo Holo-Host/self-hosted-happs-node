@@ -1,17 +1,29 @@
 {
   "name": "self-hosted-happs-node",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Node script for installing self hosted happs on HPOS from /var/lib/self-hosted-happs/default-list.yaml",
+  "main": "./dist/main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "webpack --config webpack.config.cjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Holo-Host/self-hosted-happs-node.git"
   },
   "author": "peeech",
   "license": "MIT",
   "dependencies": {
-    "unzip": "^0.1.11",
     "@holochain/conductor-api": "0.0.1-dev.8",
+    "extract-zip": "^2.0.1",
     "fs": "0.0.1-security",
+    "js-yaml": "^3.14.0",
+    "request": "^2.88.2",
     "tmp": "^0.2.1"
+  },
+  "devDependencies": {
+    "webpack": "^4.44.2",
+    "webpack-cli": "^4.1.0",
+    "bufferutil": "^4.0.1",
+    "utf-8-validate": "^5.0.2"
   }
 }
