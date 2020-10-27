@@ -67,6 +67,8 @@ export const installUi = async (happ) => {
     const unpackPath = `${UI_STORE_FOLDER}/${happ.app_id}`;
 
     try {
+        // First make sure to clean up unpackPath
+        fs.rmdirSync(unpackPath, { recursive: true });
         const uiPath = await downloadFile(happ.ui_url);
         await extract(uiPath, { dir: unpackPath })
     } catch(e) {
