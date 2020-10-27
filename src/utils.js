@@ -57,7 +57,7 @@ export const installDna = async (happ, agentPubKey) => {
         await adminWebsocket.activateApp({ app_id: app.app_id });
         app_interface = await adminWebsocket.attachAppInterface({ port: HAPP_PORT });
     } catch(e) {
-        throw new Error(`Failed to install dna ${happ.app_id} with error ${e.message}`);
+        console.log(`Failed to install dna ${happ.app_id} with error ${e.message}. Maybe already installed?`);
     }
 
     console.log(`Successfully installed dna ${app.app_id} on port ${app_interface.port}`);
