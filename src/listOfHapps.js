@@ -8,7 +8,7 @@ export const getListOfHapps = () => {
         throw new Error(`No configuration file passed.`);
     } else {
         let fileContents = fs.readFileSync(args[0], 'utf8');
-        return yaml.safeLoad(fileContents);
+        return yaml.safeLoad(fileContents) || [];
     }
     
 }
