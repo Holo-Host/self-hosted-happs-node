@@ -23,7 +23,7 @@ const downloadFile = async (downloadUrl) => {
         })
         .pipe(file)
         .on('finish', () => {
-            console.log(`Downloaded file from ${downloadUrl} to ${fileName}`);
+            // console.log(`Downloaded file from ${downloadUrl} to ${fileName}`);
             resolve(fileName);
         })
         .on('error', (error) => {
@@ -57,7 +57,8 @@ export const installDna = async (happ, agentPubKey) => {
         await adminWebsocket.activateApp({ app_id: app.app_id });
         app_interface = await adminWebsocket.attachAppInterface({ port: HAPP_PORT });
     } catch(e) {
-        console.log(`Failed to install dna ${happ.app_id} with error ${e.message}. Maybe already installed?`);
+        console.error(`Failed to install dna ${happ.app_id} with error ${e.message}. Maybe this dna is already installed?`);
+        return;
     }
 
     console.log(`Successfully installed dna ${app.app_id} on port ${app_interface.port}`);
@@ -68,11 +69,14 @@ export const installUi = async (happ) => {
 
     try {
         // First make sure to clean up unpackPath
-        fs.rmdirSync(unpackPath, { recursive: true });
+        try{
+            fs.rmdirSync(unpackPath, { recursive: true });
+        } catch(e) {}
+
         const uiPath = await downloadFile(happ.ui_url);
         await extract(uiPath, { dir: unpackPath })
     } catch(e) {
-        throw new Error(`Failed to install UI ${happ.app_id} with error ${e.message}`);
+        console.error(`Failed to install UI ${happ.app_id} with error ${e.message}`);
     }
 
     console.log(`Successfully installed UI ${happ.app_id} in ${unpackPath}`);

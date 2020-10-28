@@ -9,7 +9,7 @@ const main = async () => {
     const promises = listOfHapps.map(happ => installHapp(happ, agentPubKey));
     await Promise.all(promises);
 
-    console.log(`${listOfHapps.length} self hosted happs installed successfully`);
+    console.log(`${listOfHapps.length} self hosted happs installation finished.`);
 }
 
 main()
