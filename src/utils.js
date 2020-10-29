@@ -34,15 +34,17 @@ const downloadFile = async (downloadUrl) => {
 
 // NOTE: this code assumes a single DNA per hApp.  This will need to be updated when the hApp bundle
 // spec is completed, and the hosted-happ config Yaml file will also need to be likewise updated
-export const installDna = async (happ, agentPubKey) => {
+export const installDna = async (happ) => {
     const dnaPath = await downloadFile(happ.dna_url);
     // Install via admin interface
-    let app, app_interface;
+    let app, appInterface, agentPubKey;
     try {
         const adminWebsocket = await AdminWebsocket.connect(
             `ws://localhost:${ADMIN_PORT}`
         );
 
+        agentPubKey = await adminWebsocket.generateAgentPubKey();
+console.log(`Generated new agent ${agentPubKey.hash.toString('base64')}`);
         app = await adminWebsocket.installApp({
             agent_key: agentPubKey,
             app_id: happ.app_id,
@@ -55,13 +57,13 @@ export const installDna = async (happ, agentPubKey) => {
         });
 
         await adminWebsocket.activateApp({ app_id: app.app_id });
-        app_interface = await adminWebsocket.attachAppInterface({ port: HAPP_PORT });
+        appInterface = await adminWebsocket.attachAppInterface({ port: HAPP_PORT });
     } catch(e) {
         console.error(`Failed to install dna ${happ.app_id} with error ${e.message}. Maybe this dna is already installed?`);
         return;
     }
 
-    console.log(`Successfully installed dna ${app.app_id} on port ${app_interface.port}`);
+    console.log(`Successfully installed dna ${app.app_id} on port ${appInterface.port} for key ${agentPubKey.hash.toString('base64')}`);
 }
 
 export const installUi = async (happ) => {
@@ -80,14 +82,4 @@ export const installUi = async (happ) => {
     }
 
     console.log(`Successfully installed UI ${happ.app_id} in ${unpackPath}`);
-}
-
-export const createAgent = async () => {
-    const adminWebsocket = await AdminWebsocket.connect(
-        `ws://localhost:${ADMIN_PORT}`
-    );
-    
-    const keyBuffer = await adminWebsocket.generateAgentPubKey();
-    console.log(`New agent has been created`);
-    return keyBuffer;
 }

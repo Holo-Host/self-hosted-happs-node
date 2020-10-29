@@ -1,11 +1,9 @@
 import { installDna, installUi } from "./utils";
 
-export const installHapp = async (happ, agentPubKey) => {
+export const installHapp = async (happ) => {
     try {
-        await Promise.all([
-            installDna(happ, agentPubKey),
-            installUi(happ)
-        ]);
+        await installDna(happ)
+        await installUi(happ);
     } catch(e) {
         throw new Error(e.message);
     }

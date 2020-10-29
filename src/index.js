@@ -4,10 +4,10 @@ import { createAgent } from "./utils"
 
 const main = async () => {
     const listOfHapps = getListOfHapps();
-    const agentPubKey = await createAgent();
 
-    const promises = listOfHapps.map(happ => installHapp(happ, agentPubKey));
-    await Promise.all(promises);
+    for (const happ of listOfHapps) {
+        await installHapp(happ);
+    }
 
     console.log(`${listOfHapps.length} self hosted happs installation finished.`);
 }
