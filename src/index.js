@@ -1,15 +1,18 @@
 import { getListOfHapps } from "./listOfHapps"
 import { installHapp } from "./installHapp"
-import { createAgent } from "./utils"
+import { createAgent, startHappInterface } from "./utils"
 
 const main = async () => {
     const listOfHapps = getListOfHapps();
-    const agentPubKey = await createAgent();
 
-    const promises = listOfHapps.map(happ => installHapp(happ, agentPubKey));
-    await Promise.all(promises);
+    // Make sure app interface is started
+    await startHappInterface();
 
-    console.log(`${listOfHapps.length} self hosted happs installed successfully`);
+    for (const happ of listOfHapps) {
+        await installHapp(happ);
+    }
+
+    console.log(`${listOfHapps.length} self hosted happs installation finished.`);
 }
 
 main()
