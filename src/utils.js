@@ -37,14 +37,14 @@ const downloadFile = async (downloadUrl) => {
 export const installDna = async (happ) => {
     const dnaPath = await downloadFile(happ.dna_url);
     // Install via admin interface
-    let app, appInterface, agentPubKey;
+    let app, agentPubKey;
     try {
         const adminWebsocket = await AdminWebsocket.connect(
             `ws://localhost:${ADMIN_PORT}`
         );
 
         agentPubKey = await adminWebsocket.generateAgentPubKey();
-console.log(`Generated new agent ${agentPubKey.hash.toString('base64')}`);
+        console.log(`Generated new agent ${agentPubKey.hash.toString('base64')}`);
         app = await adminWebsocket.installApp({
             agent_key: agentPubKey,
             app_id: happ.app_id,
@@ -57,13 +57,13 @@ console.log(`Generated new agent ${agentPubKey.hash.toString('base64')}`);
         });
 
         await adminWebsocket.activateApp({ app_id: app.app_id });
-        appInterface = await adminWebsocket.attachAppInterface({ port: HAPP_PORT });
+
     } catch(e) {
         console.error(`Failed to install dna ${happ.app_id} with error ${e.message}. Maybe this dna is already installed?`);
         return;
     }
 
-    console.log(`Successfully installed dna ${app.app_id} on port ${appInterface.port} for key ${agentPubKey.hash.toString('base64')}`);
+    console.log(`Successfully installed dna ${app.app_id} for key ${agentPubKey.hash.toString('base64')}`);
 }
 
 export const installUi = async (happ) => {
@@ -82,4 +82,17 @@ export const installUi = async (happ) => {
     }
 
     console.log(`Successfully installed UI ${happ.app_id} in ${unpackPath}`);
+}
+
+export const startHappInterface = async () => {
+    try {
+        const adminWebsocket = await AdminWebsocket.connect(
+            `ws://localhost:${ADMIN_PORT}`
+        );
+        
+        console.log(`Starting app interface on port ${HAPP_PORT}`);
+        await adminWebsocket.attachAppInterface({ port: HAPP_PORT });
+    } catch(e) {
+        console.log(`Error: ${e.message}, probably interface already started.`);
+    }
 }

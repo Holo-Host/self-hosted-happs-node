@@ -1,9 +1,12 @@
 import { getListOfHapps } from "./listOfHapps"
 import { installHapp } from "./installHapp"
-import { createAgent } from "./utils"
+import { createAgent, startHappInterface } from "./utils"
 
 const main = async () => {
     const listOfHapps = getListOfHapps();
+
+    // Make sure app interface is started
+    await startHappInterface();
 
     for (const happ of listOfHapps) {
         await installHapp(happ);
