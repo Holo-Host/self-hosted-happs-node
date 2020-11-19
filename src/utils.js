@@ -23,7 +23,7 @@ const downloadFile = async (downloadUrl) => {
         })
         .pipe(file)
         .on('finish', () => {
-            // console.log(`Downloaded file from ${downloadUrl} to ${fileName}`);
+            //console.log(`Downloaded file from ${downloadUrl} to ${fileName}`);
             resolve(fileName);
         })
         .on('error', (error) => {
@@ -37,7 +37,7 @@ export const createAgent = async () => {
         const adminWebsocket = await AdminWebsocket.connect(
             `ws://localhost:${ADMIN_PORT}`
         );
-        
+
         let agentPubKey = await adminWebsocket.generateAgentPubKey();
         console.log(agentPubKey);
         console.log(`Generated new agent ${agentPubKey.toString('base64')}`);
@@ -57,22 +57,22 @@ export const installDna = async (happ, agentPubKey) => {
         const adminWebsocket = await AdminWebsocket.connect(
             `ws://localhost:${ADMIN_PORT}`
         );
-        
+        console.log("about to install", happ)
         app = await adminWebsocket.installApp({
             agent_key: agentPubKey,
             app_id: happ.app_id,
             dnas: [
                 {
-                    nick: happ.app_id, 
-                    path: dnaPath 
+                    nick: happ.app_id,
+                    path: dnaPath
                 }
             ],
         });
-
+      console.log("install app result: ", app)
         await adminWebsocket.activateApp({ app_id: app.app_id });
 
     } catch(e) {
-        console.error(`Failed to install dna ${happ.app_id} with error ${e.message}. Maybe this dna is already installed?`);
+        console.error(`Failed to install dna ${happ.app_id} with the error ${JSON.stringify(e)}. Maybe this dna is already installed?`);
         return;
     }
 
@@ -102,7 +102,7 @@ export const startHappInterface = async () => {
         const adminWebsocket = await AdminWebsocket.connect(
             `ws://localhost:${ADMIN_PORT}`
         );
-        
+
         console.log(`Starting app interface on port ${HAPP_PORT}`);
         await adminWebsocket.attachAppInterface({ port: HAPP_PORT });
     } catch(e) {
