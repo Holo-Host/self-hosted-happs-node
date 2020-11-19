@@ -32,19 +32,32 @@ const downloadFile = async (downloadUrl) => {
     })
 }
 
-// NOTE: this code assumes a single DNA per hApp.  This will need to be updated when the hApp bundle
-// spec is completed, and the hosted-happ config Yaml file will also need to be likewise updated
-export const installDna = async (happ) => {
-    const dnaPath = await downloadFile(happ.dna_url);
-    // Install via admin interface
-    let app, agentPubKey;
+export const createAgent = async () => {
     try {
         const adminWebsocket = await AdminWebsocket.connect(
             `ws://localhost:${ADMIN_PORT}`
         );
-
-        agentPubKey = await adminWebsocket.generateAgentPubKey();
+        
+        let agentPubKey = await adminWebsocket.generateAgentPubKey();
+        console.log(agentPubKey);
         console.log(`Generated new agent ${agentPubKey.hash.toString('base64')}`);
+        return agentPubKey;
+    } catch(e) {
+        console.log(`Error while generating new agent: ${e.message}.`);
+    }
+}
+
+// NOTE: this code assumes a single DNA per hApp.  This will need to be updated when the hApp bundle
+// spec is completed, and the hosted-happ config Yaml file will also need to be likewise updated
+export const installDna = async (happ, agentPubKey) => {
+    const dnaPath = await downloadFile(happ.dna_url);
+    // Install via admin interface
+    let app;
+    try {
+        const adminWebsocket = await AdminWebsocket.connect(
+            `ws://localhost:${ADMIN_PORT}`
+        );
+        
         app = await adminWebsocket.installApp({
             agent_key: agentPubKey,
             app_id: happ.app_id,

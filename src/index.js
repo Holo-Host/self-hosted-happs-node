@@ -8,8 +8,11 @@ const main = async () => {
     // Make sure app interface is started
     await startHappInterface();
 
+    // Genetate new agent
+    let agentPubKey = await createAgent();
+
     for (const happ of listOfHapps) {
-        await installHapp(happ);
+        await installHapp(happ, agentPubKey);
     }
 
     console.log(`${listOfHapps.length} self hosted happs installation finished.`);
