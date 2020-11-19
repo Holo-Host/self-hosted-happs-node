@@ -47,6 +47,20 @@ export const createAgent = async () => {
     }
 }
 
+export const listInstalledApps = async () => {
+    try {
+        const adminWebsocket = await AdminWebsocket.connect(
+            `ws://localhost:${ADMIN_PORT}`
+        );
+        const apps = await adminWebsocket.listActiveAppIds();
+        console.log("listActiveAppIds app result: ", apps)
+        return apps
+    } catch(e) {
+        console.error(`Failed to get list of active happs with error: `, e);
+        return;
+    }
+}
+
 // NOTE: this code assumes a single DNA per hApp.  This will need to be updated when the hApp bundle
 // spec is completed, and the hosted-happ config Yaml file will also need to be likewise updated
 export const installDna = async (happ, agentPubKey) => {
@@ -58,9 +72,10 @@ export const installDna = async (happ, agentPubKey) => {
             `ws://localhost:${ADMIN_PORT}`
         );
         console.log("about to install", happ)
+        const installed_happ_id = `${happ.app_id}:${agentPubKey.toString('base64')}`
         app = await adminWebsocket.installApp({
             agent_key: agentPubKey,
-            app_id: happ.app_id,
+            app_id: installed_happ_id,
             dnas: [
                 {
                     nick: happ.app_id,
@@ -68,11 +83,11 @@ export const installDna = async (happ, agentPubKey) => {
                 }
             ],
         });
-      console.log("install app result: ", app)
+        console.log("install app result: ", app)
         await adminWebsocket.activateApp({ app_id: app.app_id });
 
     } catch(e) {
-        console.error(`Failed to install dna ${happ.app_id} with the error ${JSON.stringify(e)}. Maybe this dna is already installed?`);
+        console.error(`Failed to install dna ${happ.app_id} with error: `, e);
         return;
     }
 
