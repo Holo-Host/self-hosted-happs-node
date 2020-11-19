@@ -40,7 +40,7 @@ export const createAgent = async () => {
         
         let agentPubKey = await adminWebsocket.generateAgentPubKey();
         console.log(agentPubKey);
-        console.log(`Generated new agent ${agentPubKey.hash.toString('base64')}`);
+        console.log(`Generated new agent ${agentPubKey.toString('base64')}`);
         return agentPubKey;
     } catch(e) {
         console.log(`Error while generating new agent: ${e.message}.`);
@@ -76,7 +76,7 @@ export const installDna = async (happ, agentPubKey) => {
         return;
     }
 
-    console.log(`Successfully installed dna ${app.app_id} for key ${agentPubKey.hash.toString('base64')}`);
+    console.log(`Successfully installed dna ${app.app_id} for key ${agentPubKey.toString('base64')}`);
 }
 
 export const installUi = async (happ) => {
