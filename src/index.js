@@ -1,6 +1,6 @@
 import { getListOfHapps } from "./listOfHapps"
 import { installHapp } from "./installHapp"
-import { createAgent, startHappInterface, listInstalledApps } from "./utils"
+import { createAgent, startHappInterface, listInstalledApps, installUi } from "./utils"
 
 const main = async () => {
     const listOfHapps = getListOfHapps();
@@ -12,14 +12,14 @@ const main = async () => {
     const agentPubKey = await createAgent();
 
     const installed = await listInstalledApps();
-    let installedMap = {};
-    for (let happ of installed) {
-        const happ_id = happ.split(':', 1)[0];
-        installedMap[happ_id] = true;
-    }
     for (const happ of listOfHapps) {
-        if (installedMap[happ.app_id]) {
-            console.log(`${happ.app_id} already installed`)
+        if (installed.includes(`${happ.app_id}:${happ.version}`)) {
+            console.log(`${happ.app_id} already installed, just downloading UI`)
+            try {
+                await installUi(happ);
+            } catch(e) {
+                throw new Error(e);
+            }
         } else {
             await installHapp(happ, agentPubKey);
         }

@@ -72,7 +72,7 @@ export const installDna = async (happ, agentPubKey) => {
             `ws://localhost:${ADMIN_PORT}`
         );
         console.log("about to install", happ)
-        const installed_happ_id = `${happ.app_id}:${agentPubKey.toString('base64')}`
+        const installed_happ_id = `${happ.app_id}:${happ.version}`
         app = await adminWebsocket.installApp({
             agent_key: agentPubKey,
             app_id: installed_happ_id,
