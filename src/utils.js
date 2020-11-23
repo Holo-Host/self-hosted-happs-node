@@ -23,7 +23,7 @@ const downloadFile = async (downloadUrl) => {
         })
         .pipe(file)
         .on('finish', () => {
-            // console.log(`Downloaded file from ${downloadUrl} to ${fileName}`);
+            //console.log(`Downloaded file from ${downloadUrl} to ${fileName}`);
             resolve(fileName);
         })
         .on('error', (error) => {
@@ -32,38 +32,66 @@ const downloadFile = async (downloadUrl) => {
     })
 }
 
-// NOTE: this code assumes a single DNA per hApp.  This will need to be updated when the hApp bundle
-// spec is completed, and the hosted-happ config Yaml file will also need to be likewise updated
-export const installDna = async (happ) => {
-    const dnaPath = await downloadFile(happ.dna_url);
-    // Install via admin interface
-    let app, agentPubKey;
+export const createAgent = async () => {
     try {
         const adminWebsocket = await AdminWebsocket.connect(
             `ws://localhost:${ADMIN_PORT}`
         );
 
-        agentPubKey = await adminWebsocket.generateAgentPubKey();
-        console.log(`Generated new agent ${agentPubKey.hash.toString('base64')}`);
+        let agentPubKey = await adminWebsocket.generateAgentPubKey();
+        console.log(agentPubKey);
+        console.log(`Generated new agent ${agentPubKey.toString('base64')}`);
+        return agentPubKey;
+    } catch(e) {
+        console.log(`Error while generating new agent: ${e.message}.`);
+    }
+}
+
+export const listInstalledApps = async () => {
+    try {
+        const adminWebsocket = await AdminWebsocket.connect(
+            `ws://localhost:${ADMIN_PORT}`
+        );
+        const apps = await adminWebsocket.listActiveAppIds();
+        console.log("listActiveAppIds app result: ", apps)
+        return apps
+    } catch(e) {
+        console.error(`Failed to get list of active happs with error: `, e);
+        return;
+    }
+}
+
+// NOTE: this code assumes a single DNA per hApp.  This will need to be updated when the hApp bundle
+// spec is completed, and the hosted-happ config Yaml file will also need to be likewise updated
+export const installDna = async (happ, agentPubKey) => {
+    const dnaPath = await downloadFile(happ.dna_url);
+    // Install via admin interface
+    let app;
+    try {
+        const adminWebsocket = await AdminWebsocket.connect(
+            `ws://localhost:${ADMIN_PORT}`
+        );
+        console.log("about to install", happ)
+        const installed_happ_id = `${happ.installed_happ_id}:${happ.version}`
         app = await adminWebsocket.installApp({
             agent_key: agentPubKey,
-            installed_app_id: happ.installed_app_id,
+            installed_app_id: installed_happ_id,
             dnas: [
                 {
-                    nick: happ.installed_app_id, 
-                    path: dnaPath 
+                    nick: happ.installed_app_id,
+                    path: dnaPath
                 }
             ],
         });
-
+        console.log("install app result: ", app)
         await adminWebsocket.activateApp({ installed_app_id: app.installed_app_id });
 
     } catch(e) {
-        console.error(`Failed to install dna ${happ.installed_app_id} with error ${e.message}. Maybe this dna is already installed?`);
+        console.error(`Failed to install dna ${happ.installed_app_id} with error: `, e);
         return;
     }
 
-    console.log(`Successfully installed dna ${app.installed_app_id} for key ${agentPubKey.hash.toString('base64')}`);
+    console.log(`Successfully installed dna ${app.installed_app_id} for key ${agentPubKey.toString('base64')}`);
 }
 
 export const installUi = async (happ) => {
@@ -89,7 +117,7 @@ export const startHappInterface = async () => {
         const adminWebsocket = await AdminWebsocket.connect(
             `ws://localhost:${ADMIN_PORT}`
         );
-        
+
         console.log(`Starting app interface on port ${HAPP_PORT}`);
         await adminWebsocket.attachAppInterface({ port: HAPP_PORT });
     } catch(e) {
