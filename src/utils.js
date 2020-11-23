@@ -52,8 +52,8 @@ export const listInstalledApps = async () => {
         const adminWebsocket = await AdminWebsocket.connect(
             `ws://localhost:${ADMIN_PORT}`
         );
-        const apps = await adminWebsocket.listActiveAppIds();
-        console.log("listActiveAppIds app result: ", apps)
+        const apps = await adminWebsocket.listActiveApps();
+        console.log("listActiveApps app result: ", apps)
         return apps
     } catch(e) {
         console.error(`Failed to get list of active happs with error: `, e);
