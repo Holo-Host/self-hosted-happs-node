@@ -72,13 +72,13 @@ export const installDna = async (happ, agentPubKey) => {
             `ws://localhost:${ADMIN_PORT}`
         );
         console.log("about to install", happ)
-        const installed_happ_id = `${happ.installed_happ_id}:${happ.version}`
+        const installed_app_id = `${happ.happ_id}:${happ.version}`
         app = await adminWebsocket.installApp({
             agent_key: agentPubKey,
-            installed_app_id: installed_happ_id,
+            installed_app_id,
             dnas: [
                 {
-                    nick: happ.installed_app_id,
+                    nick: happ.app_id,
                     path: dnaPath
                 }
             ],
@@ -87,7 +87,7 @@ export const installDna = async (happ, agentPubKey) => {
         await adminWebsocket.activateApp({ installed_app_id: app.installed_app_id });
 
     } catch(e) {
-        console.error(`Failed to install dna ${happ.installed_app_id} with error: `, e);
+        console.error(`Failed to install dna ${happ.app_id} with error: `, e);
         return;
     }
 
@@ -95,7 +95,7 @@ export const installDna = async (happ, agentPubKey) => {
 }
 
 export const installUi = async (happ) => {
-    const unpackPath = `${UI_STORE_FOLDER}/${happ.installed_app_id}`;
+    const unpackPath = `${UI_STORE_FOLDER}/${happ.app_id}`;
 
     try {
         // First make sure to clean up unpackPath
@@ -106,10 +106,10 @@ export const installUi = async (happ) => {
         const uiPath = await downloadFile(happ.ui_url);
         await extract(uiPath, { dir: unpackPath })
     } catch(e) {
-        console.error(`Failed to install UI ${happ.installed_app_id} with error ${e.message}`);
+        console.error(`Failed to install UI ${happ.app_id} with error ${e.message}`);
     }
 
-    console.log(`Successfully installed UI ${happ.installed_app_id} in ${unpackPath}`);
+    console.log(`Successfully installed UI ${happ.app_id} in ${unpackPath}`);
 }
 
 export const startHappInterface = async () => {
