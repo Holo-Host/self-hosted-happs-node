@@ -52,8 +52,8 @@ export const listInstalledApps = async () => {
         const adminWebsocket = await AdminWebsocket.connect(
             `ws://localhost:${ADMIN_PORT}`
         );
-        const apps = await adminWebsocket.listActiveAppIds();
-        console.log("listActiveAppIds app result: ", apps)
+        const apps = await adminWebsocket.listActiveApps();
+        console.log("listActiveApps app result: ", apps)
         return apps
     } catch(e) {
         console.error(`Failed to get list of active happs with error: `, e);
@@ -72,30 +72,30 @@ export const installDna = async (happ, agentPubKey) => {
             `ws://localhost:${ADMIN_PORT}`
         );
         console.log("about to install", happ)
-        const installed_happ_id = `${happ.app_id}:${happ.version}`
+        const installed_happ_id = `${happ.installed_happ_id}:${happ.version}`
         app = await adminWebsocket.installApp({
             agent_key: agentPubKey,
-            app_id: installed_happ_id,
+            installed_app_id: installed_happ_id,
             dnas: [
                 {
-                    nick: happ.app_id,
+                    nick: happ.installed_app_id,
                     path: dnaPath
                 }
             ],
         });
         console.log("install app result: ", app)
-        await adminWebsocket.activateApp({ app_id: app.app_id });
+        await adminWebsocket.activateApp({ installed_app_id: app.installed_app_id });
 
     } catch(e) {
-        console.error(`Failed to install dna ${happ.app_id} with error: `, e);
+        console.error(`Failed to install dna ${happ.installed_app_id} with error: `, e);
         return;
     }
 
-    console.log(`Successfully installed dna ${app.app_id} for key ${agentPubKey.toString('base64')}`);
+    console.log(`Successfully installed dna ${app.installed_app_id} for key ${agentPubKey.toString('base64')}`);
 }
 
 export const installUi = async (happ) => {
-    const unpackPath = `${UI_STORE_FOLDER}/${happ.app_id}`;
+    const unpackPath = `${UI_STORE_FOLDER}/${happ.installed_app_id}`;
 
     try {
         // First make sure to clean up unpackPath
@@ -106,10 +106,10 @@ export const installUi = async (happ) => {
         const uiPath = await downloadFile(happ.ui_url);
         await extract(uiPath, { dir: unpackPath })
     } catch(e) {
-        console.error(`Failed to install UI ${happ.app_id} with error ${e.message}`);
+        console.error(`Failed to install UI ${happ.installed_app_id} with error ${e.message}`);
     }
 
-    console.log(`Successfully installed UI ${happ.app_id} in ${unpackPath}`);
+    console.log(`Successfully installed UI ${happ.installed_app_id} in ${unpackPath}`);
 }
 
 export const startHappInterface = async () => {
