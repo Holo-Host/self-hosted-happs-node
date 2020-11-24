@@ -66,14 +66,12 @@ export const listInstalledApps = async () => {
 export const installDna = async (happ, agentPubKey) => {
     const dnaPath = await downloadFile(happ.dna_url);
     // Install via admin interface
-    let app;
+    const installed_app_id = `${happ.app_id}:${happ.version}`;
     try {
         const adminWebsocket = await AdminWebsocket.connect(
             `ws://localhost:${ADMIN_PORT}`
         );
-        console.log("about to install", happ)
-        const installed_app_id = `${happ.happ_id}:${happ.version}`
-        app = await adminWebsocket.installApp({
+        const installed_app = await adminWebsocket.installApp({
             agent_key: agentPubKey,
             installed_app_id,
             dnas: [
@@ -83,15 +81,14 @@ export const installDna = async (happ, agentPubKey) => {
                 }
             ],
         });
-        console.log("install app result: ", app)
-        await adminWebsocket.activateApp({ installed_app_id: app.installed_app_id });
+        await adminWebsocket.activateApp({ installed_app_id: installed_app.installed_app_id });
 
     } catch(e) {
         console.error(`Failed to install dna ${happ.app_id} with error: `, e);
         return;
     }
 
-    console.log(`Successfully installed dna ${app.installed_app_id} for key ${agentPubKey.toString('base64')}`);
+    console.log(`Successfully installed dna ${installed_app_id} for key ${agentPubKey.toString('base64')}`);
 }
 
 export const installUi = async (happ) => {
